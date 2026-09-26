@@ -1,1 +1,191 @@
 <h1>Hello world</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Check</title>
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: #1f2833;
+            --text-color: #c5c6c7;
+            --accent-glow: #45f3ff;
+            --accent-pink: #ff007f;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        /* Ambient background glow */
+        .ambient-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(69, 243, 255, 0.15) 0%, rgba(0,0,0,0) 70%);
+            top: 20%;
+            left: 25%;
+            z-index: 1;
+            animation: float 6s ease-in-out infinite alternate;
+        }
+
+        .ambient-glow.pink {
+            background: radial-gradient(circle, rgba(255, 0, 127, 0.12) 0%, rgba(0,0,0,0) 70%);
+            top: 50%;
+            left: 55%;
+            animation-delay: -3s;
+        }
+
+        /* Glassmorphism Card */
+        .card {
+            position: relative;
+            z-index: 10;
+            background: rgba(31, 40, 51, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 24px;
+            padding: 40px;
+            width: 320px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(69, 243, 255, 0.15);
+            border-color: rgba(69, 243, 255, 0.3);
+        }
+
+        h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            background: linear-gradient(45deg, var(--accent-glow), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            margin: 0 0 30px 0;
+            font-size: 0.95rem;
+            color: #86c232;
+            opacity: 0.85;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Main Interactive Button */
+        .vibe-btn {
+            background: transparent;
+            color: #ffffff;
+            border: 2px solid var(--accent-glow);
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            box-shadow: 0 0 15px rgba(69, 243, 255, 0.2);
+        }
+
+        .vibe-btn:hover {
+            background: var(--accent-glow);
+            color: var(--bg-color);
+            box-shadow: 0 0 25px var(--accent-glow);
+        }
+
+        .vibe-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Status Display */
+        .status-box {
+            margin-top: 30px;
+            height: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: color 0.3s ease;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) scale(1); }
+            100% { transform: translateY(30px) scale(1.1); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-glow"></div>
+    <div class="ambient-glow pink"></div>
+
+    <div class="card">
+        <h1>Current Vibe</h1>
+        <p id="vibe-type">Loading vibe...</p>
+        
+        <button class="vibe-btn" onclick="shiftVibe()">Shift Vibe</button>
+        
+        <div class="status-box" id="status-text">System operational.</div>
+    </div>
+
+    <script>
+        const vibes = [
+            { name: "Cyberpunk Neon", color: "#45f3ff" },
+            { name: "Lo-Fi Chill", color: "#ff007f" },
+            { name: "Midnight Groove", color: "#86c232" },
+            { name: "Electric Dream", color: "#a020f0" },
+            { name: "Retro Wave", color: "#ffa500" }
+        ];
+
+        let currentIdx = 0;
+
+        function shiftVibe() {
+            // Pick a new random vibe different from the current one
+            let newIdx;
+            do {
+                newIdx = Math.floor(Math.random() * vibes.length);
+            } while (newIdx === currentIdx);
+            
+            currentIdx = newIdx;
+            const chosenVibe = vibes[currentIdx];
+
+            // Update DOM element texts
+            document.getElementById('vibe-type').innerText = chosenVibe.name;
+            document.getElementById('vibe-type').style.color = chosenVibe.color;
+            
+            const statusBox = document.getElementById('status-text');
+            statusBox.innerText = "Vibe updated successfully.";
+            statusBox.style.color = chosenVibe.color;
+
+            // Dynamically shift the primary accent theme color
+            document.documentElement.style.setProperty('--accent-glow', chosenVibe.color);
+
+            // Reset status text after a brief delay
+            setTimeout(() => {
+                statusBox.innerText = "System operational.";
+                statusBox.style.color = '#c5c6c7';
+            }, 2000);
+        }
+
+        // Initialize with the first vibe on load
+        window.onload = () => {
+            shiftVibe();
+        };
+    </script>
+</body>
+</html>
